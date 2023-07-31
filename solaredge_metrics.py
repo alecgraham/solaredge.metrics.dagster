@@ -153,8 +153,9 @@ def net_production_dashboard(context: AssetExecutionContext):
     abfs = AzureBlobFileSystem(account_name=storage_account,account_key=storage_creds)
     path = '/data/power_net_production/'
     net_production = pl.from_arrow(pq.read_table(storage_container+path,filesystem=abfs))
-    output_file = '/data/net_production.csv'
+    output_file = './data/net_production.csv'
     net_production.write_csv(output_file)
+    net_production = net_production.groupby('date').agg(pl.col('consumption').sum(),pl.col('production').sum(),pl.col('net_production').sum())
     context.add_output_metadata({
         "text_metadata": "Chart.js dashboard hosted on Github pages"
         #"dashboard_url": MetadataValue.url(
