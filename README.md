@@ -4,7 +4,7 @@ This demo project explores DAGster functionality with a pipeline to collect data
 
 ## Pipeline
 
-![DAGster Graph](https://raw.githubusercontent.com/alecgraham/solaredge.metrics.dagster/img/dagster_lineage.PNG)
+![DAGster Graph](https://github.com/alecgraham/solaredge.metrics.dagster/blob/main/img/dagster_lineage.PNG)
 
 The pipeline follows 4 main steps.
 
