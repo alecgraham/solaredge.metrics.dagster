@@ -8,7 +8,7 @@ import polars as pl
 import pyarrow.parquet as pq
 from adlfs import AzureBlobFileSystem
 
-from dagster import AssetExecutionContext, MetadataValue, asset, AssetOut, multi_asset, AssetKey, DataVersion, Output
+from dagster import AutoMaterializePolicy, AssetExecutionContext, MetadataValue, asset, AssetOut, multi_asset, AssetKey, DataVersion, Output
 
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
@@ -132,7 +132,7 @@ def split_detail():
         output.append(Output(single_output,data_version=DataVersion(data_version)))
     return tuple(output)
 
-@asset(deps=[AssetKey("power_consumption"),AssetKey("power_production")]
+@asset(auto_materialize_policy=AutoMaterializePolicy.eager(),deps=[AssetKey("power_consumption"),AssetKey("power_production")]
        ,code_version='1')
 def power_net_production():
     abfs = AzureBlobFileSystem(account_name=storage_account,account_key=storage_creds)
@@ -147,7 +147,7 @@ def power_net_production():
     df = df.with_columns((pl.col('production') - pl.col('consumption')).alias('net_production'),pl.col('timestamp').str.slice(0,length=10).alias('date'))
     pq.write_table(df.to_arrow(),storage_container+'/data/power_net_production/data.parquet',filesystem=abfs)
 
-@asset(deps=[power_net_production],
+@asset(auto_materialize_policy=AutoMaterializePolicy.eager(),deps=[power_net_production],
        code_version='1')
 def net_production_dashboard(context: AssetExecutionContext):
     abfs = AzureBlobFileSystem(account_name=storage_account,account_key=storage_creds)

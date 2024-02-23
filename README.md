@@ -4,6 +4,8 @@ This demo project explores DAGster functionality with a pipeline to collect data
 
 ## Pipeline
 
+![DAGster Graph](https://raw.githubusercontent.com/alecgraham/solaredge.metrics.dagster/img/dagster_lineage.PNG)
+
 The pipeline follows 4 main steps.
 
 1. **Save raw api data as a json file.**  The pipeline uploads data for each date between 2023-07-01 and T-1 as a distinct .json file in the raw/incoming directory in ADLS.
